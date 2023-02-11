@@ -8,4 +8,5 @@ edition = "2021"
 [dependencies]
 nickel = "*"
 chrono = "0.2"
+clap   = "*"
 
