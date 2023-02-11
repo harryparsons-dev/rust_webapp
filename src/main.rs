@@ -1,27 +1,31 @@
+#[macro_use] extern crate nickel;
 extern crate chrono;
 
+use nickel::Nickel;
 use chrono::{DateTime, Local};
 use std::io::prelude::*;
 use std::fs::{File, OpenOptions};
 use std::io;
 
-fn main(){
+fn do_log_time() -> String{
 
 
      match log_time("log.txt"){
-        Ok(..) => println!("file created"),
-        Err(e) => println!("Error: {}", e)
+        Ok(entry) => format!("Entry Logged: {}", entry),
+        Err(e) => format!("Error: {}", e)
      }
 
 
 }
 
-fn log_time(filename: &'static str) -> io::Result<()> {
+fn log_time(filename: &'static str) -> io::Result<String> {
     let entry = formatted_time_entry();
-    let bytes = entry.as_bytes();
+    {
+        let bytes = entry.as_bytes();
 
-    record_entry_log(filename, &bytes)?;
-    Ok(())
+        record_entry_log(filename, &bytes)?;
+    }
+    Ok(entry)
 
 }
 
@@ -39,4 +43,23 @@ fn record_entry_log(filename: &str, bytes: &[u8]) -> io::Result<()>{
                     open(filename))?;
     (file.write_all(bytes))?;
     Ok(())
+}
+
+
+
+
+fn main() {
+    let mut server = Nickel::new();
+
+    server.utilize(router! {
+        get "**" => |_req, _res| {
+            do_log_time()
+        }
+    });
+
+    server.listen("127.0.0.1:6767").unwrap();
+}
+
+fn say_hello() -> &'static str {
+    "Hello world! (From function)"
 }
