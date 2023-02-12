@@ -9,29 +9,29 @@ use std::io;
 use clap::{Arg,App};
 
 fn main() {
-    let matches = App::new("simple-log").version("v0.0.1")
-        .arg(Arg::with_name("LOG FILE")
-             .short("l")
-             .long("logfile")
-             .required(true)
-             .takes_value(true))
-        .arg(Arg::with_name("AUTH TOKEN")
-            .short("t")
-            .long("token")
-            .takes_value(true))
-        .get_matches();
+    // let matches = App::new("simple-log").version("v0.0.1")
+    //     .arg(Arg::with_name("LOG FILE")
+    //          .short("l")
+    //          .long("logfile")
+    //          .required(true)
+    //          .takes_value(true))
+    //     .arg(Arg::with_name("AUTH TOKEN")
+    //         .short("t")
+    //         .long("token")
+    //         .takes_value(true))
+    //     .get_matches();
 
-        let logfile_path = matches.value_of("LOG FILE").unwrap();
-        let auth_token = match matches.value_of("AUTH TOKEN") {
-            Some(str) => Some(str.to_string()),
-            None => None
-        };
+    //     let logfile_path = matches.value_of("LOG FILE").unwrap();
+    //     let auth_token = match matches.value_of("AUTH TOKEN") {
+    //         Some(str) => Some(str.to_string()),
+    //         None => None
+    //     };
 
         let mut server = Nickel::new();
 
         server.utilize(router! {
             get "**" => |_req, _res| {
-                do_log_time(&logfile_path, auth_token.clone())
+                do_log_time()
             }
         });
 
@@ -43,10 +43,10 @@ fn main() {
 
 
 
-fn do_log_time(logfile_path: &str, auth_token: Option<String>) -> String{
+fn do_log_time() -> String{
 
 
-     match log_time(logfile_path){
+     match log_time("log.txt"){
         Ok(entry) => format!("Entry Logged: {}", entry),
         Err(e) => format!("Error: {}", e)
      }
